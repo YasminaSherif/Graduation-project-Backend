@@ -105,7 +105,7 @@ namespace Graduation_project.Repository.Auth
 
             var token = AuthenticateUser(new AuthenticationRequest { UserName = user.UserName, Password = user.Password });
 
-            return new AuthenticationResponseDTO()
+            AuthenticationResponseDTO final= new AuthenticationResponseDTO()
             {
                 Name = user.FirstName + " " + user.LastName,
                 Email = user.Email,
@@ -119,6 +119,9 @@ namespace Graduation_project.Repository.Auth
                 message = "Registerd"
 
             };
+
+
+            return final;
         }
 
         public string AuthenticateUser(AuthenticationRequest request)

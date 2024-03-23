@@ -17,7 +17,7 @@ namespace Graduation_project.Controllers
 
         public AuthenticationController(IAuthentication repo)
         {
-            repo = _Rebo;
+           _Rebo =repo ;
         }
 
         [HttpPost("register")]
