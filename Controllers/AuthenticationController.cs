@@ -23,7 +23,10 @@ namespace Graduation_project.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterAsync([FromForm] RegisterRequestDTO requestDTO)
         {
-            
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var result = await _Rebo.RegisterAsync(requestDTO);
 
             if (result.message is not "Registerd")

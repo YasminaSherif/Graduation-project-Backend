@@ -1,41 +1,72 @@
 using Graduation_project.Repository.Auth;
-using Microsoft.AspNetCore.Authentication;
+using Graduation_project.Repository.CustomerRepo;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
-namespace Graduation_project
+public class Program
 {
-    public class Program
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
+        var builder = WebApplication.CreateBuilder(args);
+
+        // Add services to the container.
+        builder.Services.AddControllers();
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen(c =>
         {
-            var builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
-
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-            builder.Services.AddDbContext<ApplicationContext>(OptionsBuilder =>
+            c.SwaggerDoc("v1", new OpenApiInfo
             {
-                OptionsBuilder.UseSqlServer(builder.Configuration.GetConnectionString("cs"));
+                Title = "JwtToken",
+                Version = "v1",
             });
 
-            builder.Services.AddScoped<IAuthentication, AuthenticationRepo>();
-
-
-            //addJwtBearer() --> takes first schema then options
-            var jwtOptions = builder.Configuration.GetSection("Jwt").Get<JWToptions>();
-            builder.Services.AddAuthentication().AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+            // Add security definition for JWT bearer token
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
-                //saves the token if its valid in authentication properties
+                Name = "Authorization",
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer",
+                BearerFormat = "JWT",
+                In = ParameterLocation.Header,
+                Description = "Enter JWT Token Like 'Bearer {your token}'"
+            });
+
+            // Add security requirement for JWT bearer token
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] { }
+        }
+    });
+        });
+
+        builder.Services.AddDbContext<ApplicationContext>(OptionsBuilder =>
+        {
+            OptionsBuilder.UseSqlServer(builder.Configuration.GetConnectionString("cs"));
+        });
+
+        builder.Services.AddScoped<IAuthentication, AuthenticationRepo>();
+        builder.Services.AddScoped<ICustomer, CustomerRepo>();
+
+        // Add JWT authentication
+        var jwtOptions = builder.Configuration.GetSection("Jwt").Get<JWToptions>();
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) // Specify default authentication scheme
+            .AddJwtBearer(options =>
+            {
                 options.SaveToken = true;
-                // this sapicfiy what i'll be validating inside of the token and how 
-                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
                     ValidIssuer = jwtOptions.Issuer,
@@ -43,27 +74,24 @@ namespace Graduation_project
                     ValidAudience = jwtOptions.Audience,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SigningKey))
-
-                };//this is how to validate the token 
-
-
+                };
             });
 
-            var app = builder.Build();
+        var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-
-            app.MapControllers();
-
-            app.Run();
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
         }
+
+        app.UseAuthentication(); // Use authentication middleware
+        app.UseAuthorization();
+
+        app.MapControllers();
+
+        app.Run();
     }
+
 }
