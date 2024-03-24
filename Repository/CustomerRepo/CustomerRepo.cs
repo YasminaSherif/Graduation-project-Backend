@@ -1,4 +1,7 @@
-﻿namespace Graduation_project.Repository.CustomerRepo
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace Graduation_project.Repository.CustomerRepo
 {
     public class CustomerRepo:ICustomer
     {
@@ -9,7 +12,7 @@
             _db = db;
         }
 
-        public async Task<WorkersInCategoryDTO> WorkersInCategory(byte id)
+        public async Task<WorkersInCategoryDTO> GetWorkersInCategory(byte id)
         {
             WorkersInCategoryDTO result;
             if (await _db.Categories.FindAsync(id) is null)
@@ -40,6 +43,46 @@
             };
 
             return result;
+        }
+
+        public WorkerResponseDto GetWorkerById(int id)
+        {
+            var worker =  _db.Workers
+                .Include(w=>w.ImagesOfPastWork)
+                .Include(w=>w.Reviews)
+                .SingleOrDefault(w => w.Id == id);
+            if (worker is null)
+            {
+                return new WorkerResponseDto { Message = "Worker doesn't exist" };
+            }
+
+            List<ReviewDTO> reviews = worker.Reviews.Select(r => new ReviewDTO()
+            {
+                Id = r.Id,
+                Comment = r.Comment,
+                CustomerId = r.CustomerId,
+                RateOFthisWork = r.RateOFthisWork
+            }).ToList();
+
+            List<ImagesOfPastworkDTO> images = worker.ImagesOfPastWork.Select(I => new ImagesOfPastworkDTO()
+            {
+                Id = I.Id,
+                Image = I.Image,
+            }).ToList();
+
+
+            return new WorkerResponseDto {
+                Message = "Found",
+                Id = worker.Id,
+                City = worker.City,
+                FirstName = worker.FirstName,
+                LastName = worker.LastName,
+                Location = worker.Location,
+                PhoneNumber = worker.PhoneNumber,
+                ProfilePicture = worker.ProfilePicture,
+                ImagesOfPastWork= images,
+                Reviews = reviews
+            };
         }
     }
 }

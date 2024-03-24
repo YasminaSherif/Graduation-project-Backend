@@ -5,7 +5,8 @@ namespace Graduation_project.Repository.CustomerRepo
 {
     public interface ICustomer
     {
-        public Task<WorkersInCategoryDTO> WorkersInCategory(byte id);
+        public Task<WorkersInCategoryDTO> GetWorkersInCategory(byte id);
+        public WorkerResponseDto GetWorkerById(int id);
 
     }
 }

@@ -4,6 +4,7 @@ namespace Graduation_project.DTO
 {
     public class WorkerResponseDto
     {
+        public string Message { get; set; }
         public int Id { get; set; }
         public string FirstName { get; set; }
         [MaxLength(50)]
@@ -16,6 +17,8 @@ namespace Graduation_project.DTO
         public string City { get; set; }
         public Roles Role { get; set; }
         public Byte[]? ProfilePicture { get; set; }
-        public byte CategoryId { get; set; }
+        public List<ImagesOfPastworkDTO> ImagesOfPastWork { get; set; } = new List<ImagesOfPastworkDTO>();
+        public List<ReviewDTO> Reviews { get; set; } = new List<ReviewDTO>();
+
     }
 }

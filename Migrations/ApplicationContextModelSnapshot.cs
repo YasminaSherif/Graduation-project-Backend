@@ -34,7 +34,7 @@ namespace Graduation_project.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("Graduation_project.Models.CustomerRequest", b =>
@@ -64,7 +64,7 @@ namespace Graduation_project.Migrations
 
                     b.HasIndex("WorkerId");
 
-                    b.ToTable("CustomerRequests");
+                    b.ToTable("CustomerRequests", (string)null);
                 });
 
             modelBuilder.Entity("Graduation_project.Models.ImageOfPastWork", b =>
@@ -86,7 +86,7 @@ namespace Graduation_project.Migrations
 
                     b.HasIndex("WorkerId");
 
-                    b.ToTable("imageOfPastWorks");
+                    b.ToTable("imageOfPastWorks", (string)null);
                 });
 
             modelBuilder.Entity("Graduation_project.Models.Review", b =>
@@ -116,7 +116,7 @@ namespace Graduation_project.Migrations
 
                     b.HasIndex("WorkerId");
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Reviews", (string)null);
                 });
 
             modelBuilder.Entity("Graduation_project.Models.User", b =>
@@ -178,7 +178,7 @@ namespace Graduation_project.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
 
                     b.HasDiscriminator<int>("Role");
                 });
@@ -186,8 +186,6 @@ namespace Graduation_project.Migrations
             modelBuilder.Entity("Graduation_project.Models.Customer", b =>
                 {
                     b.HasBaseType("Graduation_project.Models.User");
-
-                    b.HasDiscriminator().HasValue(0);
                 });
 
             modelBuilder.Entity("Graduation_project.Models.Worker", b =>
