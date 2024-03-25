@@ -2,9 +2,9 @@
 
 namespace Graduation_project.DTO
 {
-    public class AuthenticationResponseDTO
+    public class AuthenticationResponseDTO:ResponseDto
     {
-        public string message {  get; set; }
+       
         [MaxLength(50)]
         public string Name { get; set; }
         [StringLength(128)]

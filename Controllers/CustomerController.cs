@@ -20,18 +20,27 @@ namespace Graduation_project.Controllers
 
 
         [HttpGet("WorkersInCategory")]
-
         public async Task<IActionResult> GetWorkersInCategory(byte id)
         {
             WorkersInCategoryDTO result = await _repo.GetWorkersInCategory(id);
 
             return result.Message == "Found" ? Ok(result) : BadRequest(result.Message);
         }
+
+
+
         [HttpGet("GetWorkerById")]
         public IActionResult GetWorkerById(int id)
         {
             WorkerResponseDto result = _repo.GetWorkerById(id);
             return result.Message == "Found" ? Ok(result) : BadRequest(result.Message);
+        }
+
+        [HttpPost("CreateReview")]
+        public async Task<IActionResult> CreateReview(ReviewRequestDTO reviewDTO)
+        {
+            var result =await _repo.CreateReview(reviewDTO);
+            return result.Message == "Created" ? Created("Created",result) : BadRequest(result.Message);
         }
     }
 }

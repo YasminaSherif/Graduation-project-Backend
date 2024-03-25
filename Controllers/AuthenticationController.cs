@@ -29,8 +29,8 @@ namespace Graduation_project.Controllers
             }
             var result = await _Rebo.RegisterAsync(requestDTO);
 
-            if (result.message is not "Registerd")
-                return BadRequest(result.message);
+            if (result.Message is not "Registerd")
+                return BadRequest(result.Message);
 
             return Ok(result);
         }
@@ -41,8 +41,8 @@ namespace Graduation_project.Controllers
            
             var result = await _Rebo.LoginAsync(requestDto);
 
-            if (result.message is not "Logged in")
-                return BadRequest(result.message);
+            if (result.Message is not "Logged in")
+                return BadRequest(result.Message);
 
             return Ok(result);
 

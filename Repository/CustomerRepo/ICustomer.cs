@@ -7,6 +7,7 @@ namespace Graduation_project.Repository.CustomerRepo
     {
         public Task<WorkersInCategoryDTO> GetWorkersInCategory(byte id);
         public WorkerResponseDto GetWorkerById(int id);
+        public Task<ReviewResponseDTO> CreateReview(ReviewRequestDTO reviewDTO);
 
     }
 }

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Graduation_project.DTO;
+using Graduation_project.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Graduation_project.Repository.CustomerRepo
@@ -56,9 +58,9 @@ namespace Graduation_project.Repository.CustomerRepo
                 return new WorkerResponseDto { Message = "Worker doesn't exist" };
             }
 
-            List<ReviewDTO> reviews = worker.Reviews.Select(r => new ReviewDTO()
+            List<ReviewRequestDTO> reviews = worker.Reviews.Select(r => new ReviewRequestDTO()
             {
-                Id = r.Id,
+                
                 Comment = r.Comment,
                 CustomerId = r.CustomerId,
                 RateOFthisWork = r.RateOFthisWork
@@ -82,6 +84,39 @@ namespace Graduation_project.Repository.CustomerRepo
                 ProfilePicture = worker.ProfilePicture,
                 ImagesOfPastWork= images,
                 Reviews = reviews
+            };
+        }
+
+        public async Task<ReviewResponseDTO> CreateReview(ReviewRequestDTO reviewDTO)
+        {
+            var customer = await _db.Customers.FirstOrDefaultAsync(c => c.Id == reviewDTO.CustomerId);
+            if (customer is null)
+                return new ReviewResponseDTO { Message="Customer was not found" };
+            var worker = await _db.Workers.FirstOrDefaultAsync(c => c.Id == reviewDTO.WorkerId);
+            if (worker is null)
+                return new ReviewResponseDTO { Message="worker was not found" };
+
+            var review = new Review()
+            {
+                WorkerId = worker.Id,
+                CustomerId = customer.Id,
+                Comment = reviewDTO.Comment,
+                Customer = customer,
+                Worker = worker,
+                RateOFthisWork = reviewDTO.RateOFthisWork,
+
+            };
+
+            await _db.Reviews.AddAsync(review);
+            await _db.SaveChangesAsync();
+
+            return new ReviewResponseDTO
+            {
+                Message="Created",
+                Comment=review.Comment,
+                CustomerName=review.Customer.FirstName +" "+ review.Customer.LastName,
+                ProfilePicture=review.Customer.ProfilePicture,
+                RateOFthisWork=review.RateOFthisWork
             };
         }
     }

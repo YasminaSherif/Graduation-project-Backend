@@ -23,7 +23,7 @@ namespace Graduation_project.Repository.Auth
         {
             var user =await _db.Users.SingleOrDefaultAsync(u => u.Email == requestDto.Email && u.Password == requestDto.Password);
             if (user == null)
-               return new AuthenticationResponseDTO { message = "Email or Password is not correct" };
+               return new AuthenticationResponseDTO { Message = "Email or Password is not correct" };
 
             var token = AuthenticateUser(new AuthenticationRequest { UserName = user.UserName, Password = user.Password });
             return new AuthenticationResponseDTO()
@@ -37,7 +37,7 @@ namespace Graduation_project.Repository.Auth
                 City= user.City,
                 Location = user.Location,
                 ProfilePicture= user.ProfilePicture,
-                message="Logged in"
+                Message="Logged in"
                 
             };
 
@@ -47,10 +47,10 @@ namespace Graduation_project.Repository.Auth
         {
 
             if (await _db.Users.SingleOrDefaultAsync(u => u.Email == requestDTO.Email) is not null)
-                return new AuthenticationResponseDTO { message = "Email is already Registerd" };
+                return new AuthenticationResponseDTO { Message = "Email is already Registerd" };
 
             if (await _db.Users.SingleOrDefaultAsync(u => u.UserName == requestDTO.UserName) is not null)
-                return new AuthenticationResponseDTO { message = "Username is taken" };
+                return new AuthenticationResponseDTO { Message = "Username is taken" };
 
             byte[] profilePictureBytes = null;
             if (requestDTO.ProfilePicture != null)
@@ -114,7 +114,7 @@ namespace Graduation_project.Repository.Auth
                 City = user.City,
                 Location = user.Location,
                 ProfilePicture = user.ProfilePicture,
-                message = "Registerd"
+                Message = "Registerd"
 
             };
 
