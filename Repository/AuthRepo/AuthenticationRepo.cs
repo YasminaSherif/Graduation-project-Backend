@@ -28,6 +28,7 @@ namespace Graduation_project.Repository.Auth
             var token = AuthenticateUser(new AuthenticationRequest { UserName = user.UserName, Password = user.Password });
             return new AuthenticationResponseDTO()
             {
+                Id=user.Id,
                 Name = user.FirstName + " " + user.LastName,
                 Email = user.Email,
                 Role = user.Role.ToString(),
@@ -65,6 +66,7 @@ namespace Graduation_project.Repository.Auth
             {
                 user = new Customer()
                 {
+
                     Bios = requestDTO.Bios,
                     Role = Roles.Customer,
                     UserName = requestDTO.UserName,
@@ -105,6 +107,7 @@ namespace Graduation_project.Repository.Auth
 
             AuthenticationResponseDTO final= new AuthenticationResponseDTO()
             {
+                Id=user.Id,
                 Name = user.FirstName + " " + user.LastName,
                 Email = user.Email,
                 Role = user.Role.ToString(),

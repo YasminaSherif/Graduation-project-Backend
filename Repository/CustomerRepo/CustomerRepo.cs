@@ -119,5 +119,80 @@ namespace Graduation_project.Repository.CustomerRepo
                 RateOFthisWork=review.RateOFthisWork
             };
         }
+
+        public async Task<CustomerRequestResponseDTO> MakeRequest(CustomerRequestRequestDTO requestDTO)
+        {
+            var customer = await _db.Customers.FirstOrDefaultAsync(c => c.Id == requestDTO.CustomerId);
+            if (customer is null)
+                return new CustomerRequestResponseDTO { Message = "Customer was not found" };
+            var worker = await _db.Workers.FirstOrDefaultAsync(c => c.Id == requestDTO.WorkerId);
+            if (worker is null)
+                return new CustomerRequestResponseDTO { Message = "worker was not found" };
+
+            var request = new CustomerRequest
+            {
+                CustomerId = requestDTO.CustomerId,
+                Customer = customer,
+                Worker = worker,
+                WorkerId = requestDTO.WorkerId,
+                Status = Status.Pending,
+                Details = requestDTO.Details,
+            };
+
+            await _db.CustomerRequests.AddAsync(request);
+            await _db.SaveChangesAsync();
+
+            return new CustomerRequestResponseDTO
+            {
+                Message = "Created",
+                Details = request.Details,
+                Id = request.Id,
+                status = request.Status.ToString(),
+                WorkerId = request.WorkerId,
+                WorkerName = request.Worker.FirstName + " " + request.Worker.LastName,
+                WorkerProfilePicture = request.Worker.ProfilePicture
+            };
+
+        }
+
+        public async Task<AllCustomerRequestsDTO> GetAllRequests(int CustomerId)
+        {
+            var customer = await _db.Customers.FirstOrDefaultAsync(c => c.Id == CustomerId);
+            
+            if (customer is null)
+                return new AllCustomerRequestsDTO { Message = "Customer was not found" };
+            if(customer.CustomerRequest is null)
+                return new AllCustomerRequestsDTO { Message = "No requests yet" };
+
+            var requests = _db.CustomerRequests.Include(c => c.Worker).Where(r=>r.CustomerId==CustomerId).Select(c => new CustomerRequestResponseDTO
+            {
+                Details = c.Details,
+                Id = c.Id,
+                status = c.Status.ToString(),
+                WorkerId = c.WorkerId,
+                WorkerName = c.Worker.FirstName + " " + c.Worker.LastName,
+                WorkerProfilePicture = c.Worker.ProfilePicture
+            }).ToList();
+
+            return new AllCustomerRequestsDTO
+            {
+                Message = "Found",
+                Requests = requests
+            };
+
+        }
+
+        public async Task<ResponseDto> DeleteRequest(int CustomerId, int RequestId)
+        {
+            var customer = await _db.Customers.Include(c=>c.CustomerRequest).FirstOrDefaultAsync(c => c.Id == CustomerId);
+            if (customer is null)
+                return new ResponseDto { Message = "Customer was not found" };
+            var request=customer.CustomerRequest.SingleOrDefault(r=>r.Id==RequestId);
+            if (request is null)
+                return new ResponseDto { Message = "request was not found" };
+            _db.CustomerRequests.Remove(request);
+           await _db.SaveChangesAsync();
+            return new ResponseDto { Message = "Deleted" };
+        }
     }
 }

@@ -27,8 +27,6 @@ namespace Graduation_project.Controllers
             return result.Message == "Found" ? Ok(result) : BadRequest(result.Message);
         }
 
-
-
         [HttpGet("GetWorkerById")]
         public IActionResult GetWorkerById(int id)
         {
@@ -41,6 +39,27 @@ namespace Graduation_project.Controllers
         {
             var result =await _repo.CreateReview(reviewDTO);
             return result.Message == "Created" ? Created("Created",result) : BadRequest(result.Message);
+        }
+
+        [HttpPost("CreateRequest")]
+        public async Task<IActionResult> MakeRequest(CustomerRequestRequestDTO requestDTO)
+        {
+            var result = await _repo.MakeRequest(requestDTO);
+            return result.Message == "Created" ? Created("Created", result) : BadRequest(result.Message);
+        }
+
+        [HttpGet("GetAllRequests")]
+        public async Task<IActionResult> GetAllRequests(int CustomerId)
+        {
+            var result = await _repo.GetAllRequests(CustomerId);
+            return result.Message == "Found" ? Ok( result) : BadRequest(result.Message);
+        }
+
+        [HttpDelete("DeleteRequest")]
+        public async Task<IActionResult> DeleteRequest(int CustomerId, int RequestId)
+        {
+            var result = await _repo.DeleteRequest(CustomerId,RequestId);
+            return result.Message == "Deleted" ? Ok(result) : BadRequest(result.Message);
         }
     }
 }

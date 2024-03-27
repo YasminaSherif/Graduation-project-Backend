@@ -4,7 +4,7 @@ namespace Graduation_project.DTO
 {
     public class AuthenticationResponseDTO:ResponseDto
     {
-       
+        public int Id { get; set; }
         [MaxLength(50)]
         public string Name { get; set; }
         [StringLength(128)]
