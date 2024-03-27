@@ -1,6 +1,6 @@
 using Graduation_project.Repository.Auth;
 using Graduation_project.Repository.CustomerRepo;
-
+using Graduation_project.Repository.WorkerRepo;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -56,7 +56,7 @@ public class Program
         {
             OptionsBuilder.UseSqlServer(builder.Configuration.GetConnectionString("cs"));
         });
-
+        builder.Services.AddScoped<IWorker, WorkerRepo>();
         builder.Services.AddScoped<IAuthentication, AuthenticationRepo>();
         builder.Services.AddScoped<ICustomer, CustomerRepo>();
 
