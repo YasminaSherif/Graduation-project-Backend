@@ -1,4 +1,5 @@
-﻿using Graduation_project.Repository.CustomerRepo;
+﻿using Graduation_project.Models;
+using Graduation_project.Repository.CustomerRepo;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +31,7 @@ namespace Graduation_project.Controllers
         [HttpGet("GetWorkerById")]
         public IActionResult GetWorkerById(int id)
         {
-            WorkerResponseDto result = _repo.GetWorkerById(id);
+            WorkerDataDTO result = _repo.GetWorkerById(id);
             return result.Message == "Found" ? Ok(result) : BadRequest(result.Message);
         }
 
@@ -41,7 +42,7 @@ namespace Graduation_project.Controllers
             return result.Message == "Created" ? Created("Created",result) : BadRequest(result.Message);
         }
 
-        [HttpPost("CreateRequest")]
+        [HttpPost("MakeRequest")]
         public async Task<IActionResult> MakeRequest(CustomerRequestRequestDTO requestDTO)
         {
             var result = await _repo.MakeRequest(requestDTO);
@@ -61,5 +62,13 @@ namespace Graduation_project.Controllers
             var result = await _repo.DeleteRequest(CustomerId,RequestId);
             return result.Message == "Deleted" ? Ok(result) : BadRequest(result.Message);
         }
+
+        [HttpPut("EditDetails")]
+        public async Task<IActionResult> EditDetails([FromQuery]int id,[FromForm] UserDataRequestDTO customer)
+        {
+            var result = await _repo.EditDetails(id, customer);
+            return result.Message == "Edited" ? Ok(result) : BadRequest(result.Message);
+        }
+
     }
 }

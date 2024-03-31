@@ -3,8 +3,11 @@
     public interface IWorker
     {
         
-        public Task<CustomerDataResponseDTO> GetCustmerById(int Id);
+        public Task<ResponseDto> GetCustmerById(int Id);
         public Task<GetAllReviewsDTOcs> GetAllReviews(int Id);
-       
+        public Task<GetAllCustomerRequestsDTO> GetAllRequests(int Id);
+        public Task<CustomerRequestResponseWorkerDTO> AcceptRequest(int WorkerId, int requestId);
+        public Task<CustomerRequestResponseWorkerDTO> DeclineRequest(int WorkerId, int requestId);
+        public Task<ResponseDto> EditDetails(int id, UserDataRequestDTO worker);
     }
 }

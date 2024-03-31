@@ -3,7 +3,7 @@
     public class WorkersInCategoryDTO:ResponseDto
     {
        
-        public List<WorkerResponseDto> WorkersResponse { get; set; }
+        public List<WorkerDataDTO> WorkersResponse { get; set; }
 
     }
 }

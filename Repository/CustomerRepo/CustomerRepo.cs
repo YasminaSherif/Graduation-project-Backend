@@ -1,5 +1,6 @@
 ﻿using Graduation_project.DTO;
 using Graduation_project.Models;
+using Graduation_project.Repository.WorkerRepo;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,8 +23,8 @@ namespace Graduation_project.Repository.CustomerRepo
                 result = new WorkersInCategoryDTO() { Message="Category is not found"};
                 return result;
             }
-            List<WorkerResponseDto> workers = _db.Workers.Where(w => w.Id == id)
-                .Select(w => new WorkerResponseDto
+            List<WorkerDataDTO> workers = _db.Workers.Where(w => w.Id == id)
+                .Select(w => new WorkerDataDTO
                 {
                     Id = w.Id,
                     City = w.City,
@@ -47,7 +48,7 @@ namespace Graduation_project.Repository.CustomerRepo
             return result;
         }
 
-        public WorkerResponseDto GetWorkerById(int id)
+        public WorkerDataDTO GetWorkerById(int id)
         {
             var worker =  _db.Workers
                 .Include(w=>w.ImagesOfPastWork)
@@ -55,7 +56,7 @@ namespace Graduation_project.Repository.CustomerRepo
                 .SingleOrDefault(w => w.Id == id);
             if (worker is null)
             {
-                return new WorkerResponseDto { Message = "Worker doesn't exist" };
+                return new WorkerDataDTO { Message = "Worker doesn't exist" };
             }
 
             List<ReviewRequestDTO> reviews = worker.Reviews.Select(r => new ReviewRequestDTO()
@@ -73,7 +74,7 @@ namespace Graduation_project.Repository.CustomerRepo
             }).ToList();
 
 
-            return new WorkerResponseDto {
+            return new WorkerDataDTO {
                 Message = "Found",
                 Id = worker.Id,
                 City = worker.City,
@@ -193,6 +194,41 @@ namespace Graduation_project.Repository.CustomerRepo
             _db.CustomerRequests.Remove(request);
            await _db.SaveChangesAsync();
             return new ResponseDto { Message = "Deleted" };
+        }
+
+        public async Task<ResponseDto> EditDetails(int id, UserDataRequestDTO customer)
+        {
+            var customerInDB = _db.Customers.SingleOrDefault(c => c.Id == id);
+            if (customerInDB == null)
+                return new ResponseDto() { Message = "customer was not found in database" };
+            byte[] profilePictureBytes = null;
+            if (customer.ProfilePicture != null)
+            {
+                using var stream = new MemoryStream();
+                await customer.ProfilePicture.CopyToAsync(stream);
+                profilePictureBytes = stream.ToArray();
+            }
+            customerInDB.FirstName = customer.FirstName;
+            customerInDB.LastName = customer.LastName;
+            customerInDB.UserName = customer.UserName;
+            customerInDB.Bios = customer.Bio;
+            customerInDB.Location = customer.Location;
+            customerInDB.City = customer.City;
+            customerInDB.ProfilePicture = profilePictureBytes;
+            customerInDB.PhoneNumber = customer.PhoneNumber;
+            await _db.SaveChangesAsync();
+            return new UserDataResponseDTO
+            {
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                UserName = customer.UserName,
+                Bio = customer.Bio,
+                Location = customer.Location,
+                City = customer.City,
+                ProfilePicture = profilePictureBytes,
+                PhoneNumber = customer.PhoneNumber,
+                Message="Edited"
+            };
         }
     }
 }
