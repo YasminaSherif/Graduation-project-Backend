@@ -9,7 +9,7 @@ namespace Graduation_project.Repository.CustomerRepo
         public WorkerDataDTO GetWorkerById(int id);
         public Task<ReviewResponseDTO> CreateReview(ReviewRequestDTO reviewDTO);
         public Task<CustomerRequestResponseDTO> MakeRequest(CustomerRequestRequestDTO requestDTO);
-        public Task<AllCustomerRequestsDTO> GetAllRequests(int CustomerId);
+        public Task<AllCustomerRequestsResponseDTO> GetAllRequests(int CustomerId);
         public Task<ResponseDto> DeleteRequest(int CustomerId, int RequestId);
         public Task<ResponseDto> EditDetails(int id, UserDataRequestDTO customer);
     }

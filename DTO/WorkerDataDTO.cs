@@ -17,7 +17,7 @@ namespace Graduation_project.DTO
         [Required, MaxLength(50)]
         public string City { get; set; }
         public Byte[]? ProfilePicture { get; set; }
-        public List<ImagesOfPastworkDTO> ImagesOfPastWork { get; set; } = new List<ImagesOfPastworkDTO>();
+        public List<ImagesOfPastworkRequestDTO> ImagesOfPastWork { get; set; } = new List<ImagesOfPastworkRequestDTO>();
         public List<ReviewRequestDTO> Reviews { get; set; } = new List<ReviewRequestDTO>();
 
     }

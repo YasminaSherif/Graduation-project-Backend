@@ -60,9 +60,11 @@ namespace Graduation_project.Repository.WorkerRepo
             {
                 return new GetAllCustomerRequestsDTO() { Message = "Mo worker Found" };
             }
-            var requests = _db.CustomerRequests.Include(r => r.Customer)
+            var requests = _db.CustomerRequests.Include(r => r.Customer).Where(w=>w.WorkerId==Id)
            .Select(r => new CustomerRequestResponseWorkerDTO()
            {
+               Id=r.Id,
+               CustomerId=r.CustomerId,
                Details = r.Details,
                CustomerName = r.Customer.FirstName + " " + r.Customer.LastName,
                CustomerProfilePicture = r.Customer.ProfilePicture,
@@ -76,24 +78,26 @@ namespace Graduation_project.Repository.WorkerRepo
             };
         }
 
-        public async Task<CustomerRequestResponseWorkerDTO> AcceptRequest(int WorkerId, int requestId)
+        public async Task<CustomerRequestStatusResponseWorkerDTO> AcceptRequest(int WorkerId, int requestId)
         {
             var worker = await _db.Workers.SingleOrDefaultAsync(w => w.Id == WorkerId);
             if (worker == null)
             {
-                return new CustomerRequestResponseWorkerDTO() { Message = "Mo worker Found" };
+                return new CustomerRequestStatusResponseWorkerDTO() { Message = "Mo worker Found" };
             }
 
             var request = await _db.CustomerRequests.Include(s=>s.Customer).SingleOrDefaultAsync(w => w.Id == requestId);
             if (request == null)
             {
-                return new CustomerRequestResponseWorkerDTO() { Message = "Mo request Found" };
+                return new CustomerRequestStatusResponseWorkerDTO() { Message = "Mo request Found" };
             }
 
             request.Status = Status.Accepted;
             await _db.SaveChangesAsync();
-            return new CustomerRequestResponseWorkerDTO
+            return new CustomerRequestStatusResponseWorkerDTO
             {
+                Id=request.Id,
+                CustomerId=request.CustomerId,
                 Details = request.Details,
                 CustomerName = request.Customer.FirstName + " " + request.Customer.LastName,
                 CustomerProfilePicture = request.Customer.ProfilePicture,
@@ -102,24 +106,26 @@ namespace Graduation_project.Repository.WorkerRepo
             };
         }
 
-        public async Task<CustomerRequestResponseWorkerDTO> DeclineRequest(int WorkerId, int requestId)
+        public async Task<CustomerRequestStatusResponseWorkerDTO> DeclineRequest(int WorkerId, int requestId)
         {
             var worker = await _db.Workers.SingleOrDefaultAsync(w => w.Id == WorkerId);
             if (worker == null)
             {
-                return new CustomerRequestResponseWorkerDTO() { Message = "Mo worker Found" };
+                return new CustomerRequestStatusResponseWorkerDTO() { Message = "Mo worker Found" };
             }
 
             var request = await _db.CustomerRequests.Include(s => s.Customer).SingleOrDefaultAsync(w => w.Id == requestId);
             if (request == null)
             {
-                return new CustomerRequestResponseWorkerDTO() { Message = "Mo request Found" };
+                return new CustomerRequestStatusResponseWorkerDTO() { Message = "Mo request Found" };
             }
 
             request.Status = Status.Declined;
             await _db.SaveChangesAsync();
-            return new CustomerRequestResponseWorkerDTO
+            return new CustomerRequestStatusResponseWorkerDTO
             {
+                Id = request.Id,
+                CustomerId = request.CustomerId,
                 Details = request.Details,
                 CustomerName = request.Customer.FirstName + " " + request.Customer.LastName,
                 CustomerProfilePicture = request.Customer.ProfilePicture,

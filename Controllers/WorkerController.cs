@@ -1,11 +1,13 @@
 ﻿using Graduation_project.DTO;
 using Graduation_project.Models;
 using Graduation_project.Repository.WorkerRepo;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Graduation_project.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class WorkerController : ControllerBase
@@ -37,14 +39,14 @@ namespace Graduation_project.Controllers
         [HttpGet("AcceptRequest")]
         public async Task<IActionResult> AcceptRequest(int WorkerId, int requestId)
         {
-            CustomerRequestResponseWorkerDTO result = await _repo.AcceptRequest(WorkerId, requestId);
+            CustomerRequestStatusResponseWorkerDTO result = await _repo.AcceptRequest(WorkerId, requestId);
             return result.Message == "Accepted" ? Ok(result) : BadRequest(result.Message);
         }
 
         [HttpGet("DeclineRequest")]
         public async Task<IActionResult> DeclineRequest(int WorkerId, int requestId)
         {
-            CustomerRequestResponseWorkerDTO result = await _repo.DeclineRequest(WorkerId, requestId);
+            CustomerRequestStatusResponseWorkerDTO result = await _repo.DeclineRequest(WorkerId, requestId);
             return result.Message == "Deleted" ? Ok(result) : BadRequest(result.Message);
         }
         [HttpPut("EditDetails")]

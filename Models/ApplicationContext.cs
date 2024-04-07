@@ -18,7 +18,7 @@ namespace Graduation_project.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=DESKTOP-DGIE8P7\\SQLEXPRESS;Database=GraduationProject;Trusted_Connection=True;TrustServerCertificate=True");
+            optionsBuilder.UseSqlServer("Server=DESKTOP-ELNCRIE\\SQLEXPRESS;Database=GraduationProject;Trusted_Connection=True;TrustServerCertificate=True");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -23,7 +23,7 @@ namespace Graduation_project.Repository.CustomerRepo
                 result = new WorkersInCategoryDTO() { Message="Category is not found"};
                 return result;
             }
-            List<WorkerDataDTO> workers = _db.Workers.Where(w => w.Id == id)
+            List<WorkerDataDTO> workers = _db.Workers.Where(w => w.CategoryId==id)
                 .Select(w => new WorkerDataDTO
                 {
                     Id = w.Id,
@@ -67,7 +67,7 @@ namespace Graduation_project.Repository.CustomerRepo
                 RateOFthisWork = r.RateOFthisWork
             }).ToList();
 
-            List<ImagesOfPastworkDTO> images = worker.ImagesOfPastWork.Select(I => new ImagesOfPastworkDTO()
+            List<ImagesOfPastworkRequestDTO> images = worker.ImagesOfPastWork.Select(I => new ImagesOfPastworkRequestDTO()
             {
                 Id = I.Id,
                 Image = I.Image,
@@ -156,14 +156,14 @@ namespace Graduation_project.Repository.CustomerRepo
 
         }
 
-        public async Task<AllCustomerRequestsDTO> GetAllRequests(int CustomerId)
+        public async Task<AllCustomerRequestsResponseDTO> GetAllRequests(int CustomerId)
         {
             var customer = await _db.Customers.FirstOrDefaultAsync(c => c.Id == CustomerId);
             
             if (customer is null)
-                return new AllCustomerRequestsDTO { Message = "Customer was not found" };
+                return new AllCustomerRequestsResponseDTO { Message = "Customer was not found" };
             if(customer.CustomerRequest is null)
-                return new AllCustomerRequestsDTO { Message = "No requests yet" };
+                return new AllCustomerRequestsResponseDTO { Message = "No requests yet" };
 
             var requests = _db.CustomerRequests.Include(c => c.Worker).Where(r=>r.CustomerId==CustomerId).Select(c => new CustomerRequestResponseDTO
             {
@@ -175,7 +175,7 @@ namespace Graduation_project.Repository.CustomerRepo
                 WorkerProfilePicture = c.Worker.ProfilePicture
             }).ToList();
 
-            return new AllCustomerRequestsDTO
+            return new AllCustomerRequestsResponseDTO
             {
                 Message = "Found",
                 Requests = requests
